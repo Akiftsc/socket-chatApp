@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <style>
+        *{margin: 0; padding: 0;}
+        body{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        main{
+            margin: 25px 0;
+            width: 450px;
+            height: 600px;
+            background-color: wheat;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        main > h1{
+            text-align: center;
+        }
+
+        main > div > ul{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        main > div > ul div{
+            width: 100%;
+            position: relative;
+            margin: 5px 0;
+        }
+
+        main > div > ul div li{
+            display: flex;
+            justify-content: end;
+            font-size: 18px;
+            gap: 5px;
+            padding: 5px;
+            border-radius: 8px 8px 0px 8px;
+            color: white;
+            position: absolute;
+        }
+
+        main > div > ul div li.stranger{
+            background-color: rgb(54, 54, 228);
+            left:0;
+        }
+
+        main > div > ul div li i{
+            margin-top: 10px;
+        }
+
+        main > div > ul div li.me{
+            background-color: rgb(26, 181, 26);
+            right: 0 !important;
+        }
+
+        .form{
+            margin-bottom: 48px;
+        }
+
+        .form input{
+            outline: none;
+            font-size: 16px;
+            width: 128px;
+            height: 36px;
+        }
+
+        .form button{
+            background-color: lavender;
+            outline: none;
+            border: 2px solid #000;
+            width: 128px;
+            height: 36px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background-color: gray;
+        }
+
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Message App</h1>
+        <div>
+            <ul id="ul">
+            
+               
+         
+            </ul>
+        </div>
+    </main>
+
+    <div class="form">
+        <input placeholder="Adın" id="name" />
+        <input placeholder="Mesajın" id="message" />
+        <button>Gönder</button>
+    </div>
+
+    
+    <script>
+        const socket = io("http://localhost:3000");
+        const btn = document.querySelector(".form button");
+
+        socket.on("connection");
+
+
+            btn.addEventListener("click", (e) => {
+            const msg = {
+                username: document.querySelector(".form #name").value,
+                messageContent: document.querySelector(".form #message").value,
+            }
+
+            socket.emit("message", msg)
+
+               const element = `
+                  <div>
+                    <li class="me">
+                        <p>${msg.messageContent}</p>
+                        <i>${msg.username}</i>
+                    </li>
+               </div>
+            `;
+
+            document.getElementById("ul").innerHTML += element;
+        })
+        
+         socket.on("message", (data) => {
+            const element = `
+                  <div>
+                    <li class="stranger">
+                        <p>${data.messageContent}</p>
+                        <i>${data.username}</i>
+                    </li>
+               </div>
+            `;
+
+            document.getElementById("ul").innerHTML += element;
+                     
+        })
+    </script>
+</body>
+</html>
